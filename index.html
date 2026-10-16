@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Mini App & Adsgram</title>
+
+    <!-- Telegram Web App Script -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <!-- Adsgram SDK -->
+    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1c1d22;
+            color: #ffffff;
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+        }
+        .card {
+            background: #2b2d35;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            margin-top: 50px;
+        }
+        h1 { font-size: 24px; margin-bottom: 10px; }
+        p { color: #aaaaaa; }
+        .score-board {
+            font-size: 32px;
+            color: #0088cc;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        button {
+            background-color: #0088cc;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background-color: #006699;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>Mini App Task Zone</h1>
+        <p>ভিডিও অ্যাড দেখুন এবং রিওয়ার্ড পয়েন্ট সংগ্রহ করুন</p>
+        
+        <div class="score-board">
+            পয়েন্ট: <span id="balance">0</span>
+        </div>
+
+        <button onclick="showAdsgramAd()">Watch Ad (+100 Points)</button>
+    </div>
+
+    <script>
+        // ১. Telegram WebApp ইনিশিয়ালাইজেশন
+        const tg = window.Telegram.WebApp;
+        tg.expand(); // ফুল স্ক্রিন ভিউ
+
+        let userPoints = 0;
+
+        // ২. Adsgram Ad Controller সেটআপ
+        // 'YOUR_BLOCK_ID' এর জায়গায় আপনার Adsgram-এর দেওয়া Block ID বসান
+        const AdController = window.Adsgram.init({ 
+            blockId: "YOUR_BLOCK_ID" 
+        });
+
+        // ৩. অ্যাড দেখানো এবং রিওয়ার্ড প্রসেসিং
+        function showAdsgramAd() {
+            AdController.show().then((result) => {
+                // ভিডিও দেখা সম্পূর্ণ হলে
+                userPoints += 100;
+                document.getElementById('balance').innerText = userPoints;
+                tg.showAlert("অভিনন্দন! আপনি ১০০ পয়েন্ট পেয়েছেন।");
+            }).catch((result) => {
+                // যদি ইউজার ভিডিও শেষ না করে কেটে দেয় বা অ্যাড লোড না হয়
+                if (result.error) {
+                    tg.showAlert("বিজ্ঞাপন লোড হতে সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।");
+                } else {
+                    tg.showAlert("পুরো ভিডিওটি না দেখলে পয়েন্ট পাবেন না!");
+                }
+            });
+        }
+    </script>
+</body>
+</html>
